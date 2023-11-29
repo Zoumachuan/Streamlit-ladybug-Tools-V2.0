@@ -27,4 +27,4 @@
 ## 访问地址
 [**点此体验**](https://ladybug-tools-online.streamlit.app/)
 
-特别感谢* [殷工](https://github.com/ymg2007) * [陶工](https://github.com/GudaoStudio) * [柯东](https://github.com/YuP2905)
+特别感谢 [殷工](https://github.com/ymg2007)  [陶工](https://github.com/GudaoStudio)  [柯东](https://github.com/YuP2905)
