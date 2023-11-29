@@ -132,5 +132,3 @@ win-inet-pton
 wincertstore==0.2
 yarl==1.8.2
 zipp
-zipfile
-
