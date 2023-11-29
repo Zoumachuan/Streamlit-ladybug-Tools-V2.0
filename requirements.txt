@@ -107,7 +107,6 @@ smmap==5.0.0
 sniffio
 soupsieve
 streamlit==1.21.0
-tempfile
 tenacity==8.2.2
 terminado
 tinycss2
