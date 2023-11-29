@@ -1,4 +1,4 @@
-# Streamlit-ladybug-Tools-V2.0
+## Streamlit-ladybug-Tools-V2.0
 在殷工与陶工的帮助下完成了有关EnergyPlusWeather(EPW)大部分数据的在线可视化，在此基础上结合焓湿图的计算原理以及Climate Consultant中的策略标准，实现了更加直观的策略分析。
 
 # Streamlit-ladybug-Tools-V2.0.py
@@ -10,7 +10,7 @@
 ·计划：增加和热舒适有关的图像，方便调用
 ·计划：支持简单的OBJ/DAE输入，并进行日照计算
 
-## 允许可视化的内容
+# 允许可视化的内容
 * 被动策略
 * 干球温度/露点温度
 * 相对湿度
@@ -18,6 +18,11 @@
 * 直接法线辐射/散射水平辐射/全球水平辐射
 * 直接法线照度/散射水平照度/全球水平照度
 * 天空覆盖量
+
+![stat](https://github.com/Zoumachuan/Streamlit-ladybug-Tools-V2.0/blob/main/1.png)
+![stat](https://github.com/Zoumachuan/Streamlit-ladybug-Tools-V2.0/blob/main/2.png)
+![stat](https://github.com/Zoumachuan/Streamlit-ladybug-Tools-V2.0/blob/main/3.png)
+
 ## 访问地址
 [**点此体验**](https://ladybug-tools-online.streamlit.app/)
 
