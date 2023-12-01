@@ -1,6 +1,6 @@
 # Streamlit-ladybug-Tools-V2.0
 在殷工与陶工的帮助下完成了有关EnergyPlusWeather(EPW)大部分数据的在线可视化，在此基础上结合焓湿图的计算原理以及Climate Consultant中的策略标准，实现了更加直观的策略分析。
-[**点此体验**](https://ladybug-tools-online.streamlit.app/)
+[**点此体验**]([https://ladybug-tools-online.streamlit.app/](https://ladybug-tools-online-v2.streamlit.app/))
 
 # Streamlit-ladybug-Tools-V2.0.py
 使得绿色建筑策略分析与EPW中的数据均可以以便捷的方式进行可视化。目前已收录中国绝大多数气象数据文件（包括中国大陆，台湾省、香港特别行政区和澳门特别行政区）。可以通过选择省份-选择EPW文件来进行选择，如果您有自己的EPW文件，也可以直接上传，最终会以已上传的文件为准。
@@ -26,6 +26,6 @@
 ![stat](https://github.com/Zoumachuan/Streamlit-ladybug-Tools-V2.0/blob/main/3.png)
 
 ## 访问地址
-[**点此体验**](https://ladybug-tools-online.streamlit.app/)
+[**点此体验**]([https://ladybug-tools-online.streamlit.app/](https://ladybug-tools-online-v2.streamlit.app/))
 
 特别感谢 [殷工](https://github.com/ymg2007)  [陶工](https://github.com/GudaoStudio)  [柯东](https://github.com/YuP2905)
