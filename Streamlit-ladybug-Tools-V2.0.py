@@ -103,8 +103,8 @@ folder_mapping = {
 }
 
 repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
-response = requests.get(repo_url, verify=False)
-folder_list = [item["name"] for item in response.json() if item["type"] == "dir"]
+response = requests.get(repo_url, verify=False).json()  # 获取 JSON 数据
+folder_list = [item["name"] for item in response if item["type"] == "dir"]
 
 # 进行名称替换
 folder_list_replaced = [folder_mapping.get(folder, folder) for folder in folder_list]
