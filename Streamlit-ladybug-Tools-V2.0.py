@@ -103,42 +103,25 @@ folder_mapping = {
     "CHN_ZJ": "浙江省"
 }
 
-@st.cache
-def fetch_github_contents(repo_url):
-    response = requests.get(repo_url, verify=False)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
-
-# 从GitHub获取数据
 repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
-github_contents = fetch_github_contents(repo_url)
+response = requests.get(repo_url, verify=False)
 
-# 检查响应并处理数据
-if github_contents is not None:
-    folder_list = [item["name"] for item in github_contents if item["type"] == "dir"]
+# 添加调试输出以检查response内容
+print("Response status code:", response.status_code)
+print("Response content:", response.content)
 
-    # 进行名称替换
-    folder_list_replaced = [folder_mapping.get(folder, folder) for folder in folder_list]
-
-    # 创建一个下拉框选择文件夹
-    selected_folder_index = st.selectbox("Select a province/选择省份", range(len(folder_list_replaced)), format_func=lambda i: folder_list_replaced[i])
-else:
+# 检查响应状态码
+if response.status_code != 200:
     st.write(f"Failed to retrieve data from GitHub API. Status code: {response.status_code}")
+else:
+    response_json = response.json()
+    folder_list = [item["name"] for item in response_json if item["type"] == "dir"]
 
-# 获取原始文件夹名称（没有进行替换）
-original_selected_folder = folder_list[selected_folder_index]
-# 获取文件夹路径
-folder_path = f"https://github.com/Zoumachuan/CHN_EPW/tree/main/CHN_EPW/{original_selected_folder}"
+# 进行名称替换
+folder_list_replaced = [folder_mapping.get(folder, folder) for folder in folder_list]
 
-# 获取文件夹内的所有文件
-file_url = f"https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW/{original_selected_folder}"
-response = requests.get(file_url, verify=False)
-file_list = [item["name"] for item in response.json() if item["type"] == "file"]
-
-# 创建一个下拉框选择文件
-selected_file = st.selectbox("Select a file/选择您需要的文件", file_list)
+# 创建一个下拉框选择文件夹
+selected_folder_index = st.selectbox("Select a province/选择省份", range(len(folder_list_replaced)), format_func=lambda i: folder_list_replaced[i])
 
 # 检查选择的文件是否为zip格式
 if selected_file.endswith(".zip"):
