@@ -102,18 +102,20 @@ folder_mapping = {
     "CHN_ZJ": "浙江省"
 }
 
-repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
-response = requests.get(repo_url, verify=False)
+headers = {
+    "Authorization": "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"
+}
 
-# 添加调试输出以检查response内容
-print("Response status code:", response.status_code)
-print("Response content:", response.content)
+repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
+response = requests.get(repo_url, headers=headers, verify=False)
 
 # 检查响应状态码
 if response.status_code != 200:
     st.write(f"Failed to retrieve data from GitHub API. Status code: {response.status_code}")
 else:
+    # 继续处理响应数据
     response_json = response.json()
+    # 以下继续进行数据处理
     folder_list = [item["name"] for item in response_json if item["type"] == "dir"]
 
 # 进行名称替换
