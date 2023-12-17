@@ -109,23 +109,25 @@ def get_github_contents(repo_url, token):
     if repo_url in cache:
         return cache.get(repo_url)
     else:
-        headers = {"Authorization": f"token {token}"}  # 使用传入的 token
+        headers = {"Authorization": f"token {token}"}
         response = requests.get(repo_url, headers=headers)
         if response.status_code == 200:
-            cache[repo_url] = response.json()  # 将结果存入缓存
-        return response.json()  # 返回 JSON 格式的内容
+            cache[repo_url] = response.json()
+        return response
 
 repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
 github_token = "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"  # 替换为您的 GitHub Token
 response = get_github_contents(repo_url, github_token)
 
 # 添加调试输出以检查response内容
-print("Response status code:", response.status_code)
-print("Response content:", response.content)
+print("Response content:", response)
 
 # 检查响应状态码
-if response.status_code != 200:
-    st.write(f"Failed to retrieve data from GitHub API. Status code: {response.status_code}")
+response_data = response.json()
+print("Response status code:", response_data.status_code)
+
+if response_data.status_code != 200:
+    print(f"Failed to retrieve data from GitHub API. Status code: {response_data.status_code}")
 else:
     response_json = response.json()
     folder_list = [item["name"] for item in response_json if item["type"] == "dir"]
