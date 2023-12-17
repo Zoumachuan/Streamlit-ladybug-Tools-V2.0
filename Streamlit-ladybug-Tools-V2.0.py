@@ -7,12 +7,7 @@ import ladybug_charts
 import ladybug.windrose as wr
 import pandas as pd
 import math
-import zipfile
-import requests
-import io
-import tempfile
-import httpx
-from cachetools import TTLCache
+
 
 # Function to map a value between two ranges to a new range
 def map_value(value, old_min, old_max, new_min, new_max):
@@ -63,159 +58,17 @@ def map_temperature_to_color(temperature, min_temp, max_temp, color_scheme):
 
 st.header("Visualization of Climate Data and Passive Strategies Online")
 st.subheader("气象数据与被动策略在线可视化")
+st.write("请在地图上选择您要下载的epw文件，解压并上传即可使用")
+st.markdown('<iframe src="https://epwmap.zhenzixu.online/" style="border:0; width:100%; height:600px;" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>', unsafe_allow_html=True)
+uploaded_file = st.file_uploader("**Upload EPW file/请上传epw文件**", type="epw")
 
-httpx.verify = False
-# 获取仓库中的文件夹列表
-folder_mapping = {
-    "CHN_AN": "安徽省",
-    "CHN_BJ": "北京市",
-    "CHN_SH": "上海市",
-    "CHN_CQ": "重庆市",
-    "CHN_FJ": "福建省",
-    "CHN_GD": "广东省",
-    "CHN_GS": "甘肃省",
-    "CHN_XJ": "新疆维吾尔自治区",
-    "CHN_SN": "陕西省",
-    "CHN_GX": "广西壮族自治区",
-    "CHN_GZ": "贵州省",
-    "CHN_HA": "河南省",
-    "CHN_HB": "湖北省",
-    "CHN_HE": "河北省",
-    "CHN_HI": "海南省",
-    "HKG": "香港特别行政区",
-    "CHN_HL": "黑龙江省",
-    "CHN_HN": "湖南省",
-    "CHN_JL": "吉林省",
-    "CHN_JS": "江苏省",
-    "CHN_JX": "江西省",
-    "CHN_LN": "辽宁省",
-    "MAC": "澳门特别行政区",
-    "CHN_NM": "内蒙古自治区",
-    "CHN_NX": "宁夏回族自治区",
-    "CHN_QH": "青海省",
-    "CHN_SC": "四川省",
-    "CHN_SD": "山东省",
-    "CHN_SX": "山西省",
-    "CHN_TJ": "天津市",
-    "TWN": "台湾省",
-    "CHN_XZ": "西藏自治区",
-    "CHN_YN": "云南省",
-    "CHN_ZJ": "浙江省"
-}
-
-cache = TTLCache(maxsize=5, ttl=3600)
-
-def get_github_contents(repo_url, token):
-    if repo_url in cache:
-        return cache.get(repo_url)
-    else:
-        headers = {"Authorization": f"token {token}"}
-        response = requests.get(repo_url, headers=headers)
-        if response.status_code == 200:
-            cache[repo_url] = response.json()
-        return response
-
-repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
-github_token = "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"  # 替换为您的 GitHub Token
-response = get_github_contents(repo_url, github_token)
-
-# 添加调试输出以检查response内容
-print("Response content:", response)
-
-# 检查响应状态码
-response_data = response.json()
-print("Response status code:", response_data.status_code)
-
-if response_data.status_code != 200:
-    print(f"Failed to retrieve data from GitHub API. Status code: {response_data.status_code}")
-else:
-    response_json = response.json()
-    folder_list = [item["name"] for item in response_json if item["type"] == "dir"]
-
-# 进行名称替换
-folder_list_replaced = [folder_mapping.get(folder, folder) for folder in folder_list]
-
-# 创建一个下拉框选择文件夹
-selected_folder_index = st.selectbox("Select a province/选择省份", range(len(folder_list_replaced)), format_func=lambda i: folder_list_replaced[i])
-
-# 获取原始文件夹名称（没有进行替换）
-original_selected_folder = folder_list[selected_folder_index]
-# 获取文件夹路径
-folder_path = f"https://github.com/Zoumachuan/CHN_EPW/tree/main/CHN_EPW/{original_selected_folder}"
-
-# 获取文件夹内的所有文件
-file_url = f"https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW/{original_selected_folder}"
-response = requests.get(file_url, verify=False)
-file_list = [item["name"] for item in response.json() if item["type"] == "file"]
-
-# 创建一个下拉框选择文件
-selected_file = st.selectbox("Select a file/选择您需要的文件", file_list)
-# 检查选择的文件是否为zip格式
-if selected_file.endswith(".zip"):
-    # 读取zip文件
-    zip_file_url = f"https://github.com/Zoumachuan/CHN_EPW/raw/main/CHN_EPW/{original_selected_folder}/{selected_file}"
-    zip_data = requests.get(zip_file_url, verify=False).content
-
-    # 创建一个字节流对象
-    zip_data = io.BytesIO(zip_data)
-
-    # 解压缩zip文件
-    with zipfile.ZipFile(zip_data, "r") as zip_ref:
-        # 获取zip文件中所有的文件
-        zip_files = zip_ref.namelist()
-
-        # 获取所有以".epw"结尾的文件
-        epw_files = [file for file in zip_files if file.endswith(".epw")]
-
-        # 创建一个下拉框选择epw文件
-        selected_epw = st.selectbox("Select an EPW file/选择您需要的EPW文件", epw_files)
-
-        # 解压缩选中的epw文件到内存中
-        epw_data = zip_ref.read(selected_epw)
-
-        # 保存解压后的epw数据到临时文件
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".epw") as temp_file:
-            temp_file.write(epw_data)
-            temp_file_path = temp_file.name
-
-        # 加载解压后的epw文件
-        epw = epw_module.EPW(temp_file_path)
-
-        # 显示成功提示信息
-        st.success("EPW file read successfully!/已成功读取您选择的EPW文件")
-
-    # 添加一个下载按钮，用于下载zip文件
-    st.download_button(
-        label="Download EPW file",
-        data=zip_data.getvalue(),
-        file_name=selected_file,
-        mime="application/zip"
-    )
-else:
-    # 显示错误提示信息
-    st.error("Invalid file format. Please select a ZIP file.")
-
-uploaded_file = st.file_uploader("Upload an EPW file/或者上传您自己的epw文件，格式为.epw", type="epw")
-
-# 如果有文件上传，使用上传的文件作为EPW文件
 if uploaded_file is not None:
-    # 读取上传的EPW文件
-    epw_data = uploaded_file.read()
+    data = uploaded_file.getvalue()
+    with open("new.epw", "wb") as f:
+        f.write(data)
+    st.success("File uploaded successfully!")
 
-    # 保存上传的EPW数据到临时文件
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".epw") as temp_file:
-        temp_file.write(epw_data)
-        temp_file_path = temp_file.name
-
-    # 加载上传的EPW文件
-    epw = epw_module.EPW(temp_file_path)
-    
-
-    # 显示成功提示信息
-    st.success("Your EPW file uploaded successfully!/已成功读取您上传的EPW文件")
-
-
-st.subheader('您当前读取的数据是：' + str(epw))
+epw = epw_module.EPW("new.epw")
 
 slider1 = st.slider("Start month/起始月份", 1, 12, key=1)
 i = slider1
