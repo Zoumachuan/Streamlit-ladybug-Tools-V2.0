@@ -109,7 +109,7 @@ def get_github_contents(repo_url, token):
     if repo_url in cache:
         return cache.get(repo_url)
     else:
-        headers = {"Authorization": f"token {token}"}  # 添加 token 到请求头
+        headers = {"Authorization": f"token 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"}  # 添加 token 到请求头
         response = requests.get(repo_url, headers=headers, verify=False)
         cache[repo_url] = response
         return response
