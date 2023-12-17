@@ -58,7 +58,7 @@ def map_temperature_to_color(temperature, min_temp, max_temp, color_scheme):
 
 st.header("Visualization of Climate Data and Passive Strategies Online")
 st.subheader("气象数据与被动策略在线可视化")
-st.write("请在地图上选择您要下载的epw文件，解压并上传即可使用")
+st.write("请在地图上选择您要下载的epw文件-右键-链接另存为，解压并上传即可使用")
 st.markdown('<iframe src="https://epwmap.zhenzixu.online/" style="border:0; width:100%; height:600px;" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>', unsafe_allow_html=True)
 uploaded_file = st.file_uploader("**Upload EPW file/请上传epw文件**", type="epw")
 
