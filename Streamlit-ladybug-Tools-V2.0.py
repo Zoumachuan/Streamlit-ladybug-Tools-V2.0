@@ -12,7 +12,7 @@ import requests
 import io
 import tempfile
 import httpx
-from functools import lru_cache
+from cachetools import TTLCache
 
 # Function to map a value between two ranges to a new range
 def map_value(value, old_min, old_max, new_min, new_max):
@@ -103,10 +103,16 @@ folder_mapping = {
     "CHN_ZJ": "浙江省"
 }
 
-@lru_cache(maxsize=None)
+# 创建一个具有TTL（生存时间）的缓存，例如设置缓存时间为3600秒（1小时）
+cache = TTLCache(maxsize=100, ttl=3600)
+
 def get_github_contents(repo_url):
-    response = requests.get(repo_url, verify=False)
-    return response
+    if repo_url in cache:
+        return cache.get(repo_url)
+    else:
+        response = requests.get(repo_url, verify=False)
+        cache[repo_url] = response
+        return response
 
 repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
 response = get_github_contents(repo_url)
