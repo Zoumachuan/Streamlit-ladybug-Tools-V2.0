@@ -109,10 +109,11 @@ def get_github_contents(repo_url, token):
     if repo_url in cache:
         return cache.get(repo_url)
     else:
-        headers = {"Authorization": f"token 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"}  # 添加 token 到请求头
-        response = requests.get(repo_url, headers=headers, verify=False)
-        cache[repo_url] = response
-        return response
+        headers = {"Authorization": f"token {token}"}  # 使用传入的 token
+        response = requests.get(repo_url, headers=headers)
+        if response.status_code == 200:
+            cache[repo_url] = response.json()  # 将结果存入缓存
+        return response.json()  # 返回 JSON 格式的内容
 
 repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
 github_token = "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"  # 替换为您的 GitHub Token
