@@ -12,6 +12,7 @@ import requests
 import io
 import tempfile
 import httpx
+from ratelimit import limits, sleep_and_retry
 
 # Function to map a value between two ranges to a new range
 def map_value(value, old_min, old_max, new_min, new_max):
@@ -102,12 +103,19 @@ folder_mapping = {
     "CHN_ZJ": "浙江省"
 }
 
-headers = {
-    "Authorization": "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"
-}
+# 定义请求速率为每分钟最多允许10次请求
+@limits(calls=1, period=60)
+@sleep_and_retry
+def make_request(url):
+    headers = {
+        "Authorization": "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"
+    }
+    response = requests.get(url, headers=headers, verify=False)
+    return response
 
+# 使用限速的make_request函数进行请求
 repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
-response = requests.get(repo_url, headers=headers, verify=False)
+response = make_request(repo_url)
 
 # 检查响应状态码
 if response.status_code != 200:
