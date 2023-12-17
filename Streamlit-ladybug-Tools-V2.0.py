@@ -122,6 +122,18 @@ folder_list_replaced = [folder_mapping.get(folder, folder) for folder in folder_
 # 创建一个下拉框选择文件夹
 selected_folder_index = st.selectbox("Select a province/选择省份", range(len(folder_list_replaced)), format_func=lambda i: folder_list_replaced[i])
 
+# 获取原始文件夹名称（没有进行替换）
+original_selected_folder = folder_list[selected_folder_index]
+# 获取文件夹路径
+folder_path = f"https://github.com/Zoumachuan/CHN_EPW/tree/main/CHN_EPW/{original_selected_folder}"
+
+# 获取文件夹内的所有文件
+file_url = f"https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW/{original_selected_folder}"
+response = requests.get(file_url, verify=False)
+file_list = [item["name"] for item in response.json() if item["type"] == "file"]
+
+# 创建一个下拉框选择文件
+selected_file = st.selectbox("Select a file/选择您需要的文件", file_list)
 # 检查选择的文件是否为zip格式
 if selected_file.endswith(".zip"):
     # 读取zip文件
