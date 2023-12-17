@@ -98,6 +98,7 @@ pytz
 pytz-deprecation-shim==0.1.0.post0
 pyzmq
 requests
+ratelimit
 rich==13.3.4
 scipy==1.7.3
 sip
