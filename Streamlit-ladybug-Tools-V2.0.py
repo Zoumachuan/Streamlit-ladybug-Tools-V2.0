@@ -103,34 +103,29 @@ folder_mapping = {
     "CHN_ZJ": "浙江省"
 }
 
-# 定义请求速率为每分钟最多允许10次请求
-@limits(calls=1, period=60)
-@sleep_and_retry
-def make_request(url):
-    headers = {
-        "Authorization": "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"
-    }
-    response = requests.get(url, headers=headers, verify=False)
-    return response
+@st.cache
+def fetch_github_contents(repo_url):
+    response = requests.get(repo_url, verify=False)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None
 
-# 使用限速的make_request函数进行请求
+# 从GitHub获取数据
 repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
-response = make_request(repo_url)
+github_contents = fetch_github_contents(repo_url)
 
-# 检查响应状态码
-if response.status_code != 200:
-    st.write(f"Failed to retrieve data from GitHub API. Status code: {response.status_code}")
+# 检查响应并处理数据
+if github_contents is not None:
+    folder_list = [item["name"] for item in github_contents if item["type"] == "dir"]
+
+    # 进行名称替换
+    folder_list_replaced = [folder_mapping.get(folder, folder) for folder in folder_list]
+
+    # 创建一个下拉框选择文件夹
+    selected_folder_index = st.selectbox("Select a province/选择省份", range(len(folder_list_replaced)), format_func=lambda i: folder_list_replaced[i])
 else:
-    # 继续处理响应数据
-    response_json = response.json()
-    # 以下继续进行数据处理
-    folder_list = [item["name"] for item in response_json if item["type"] == "dir"]
-
-# 进行名称替换
-folder_list_replaced = [folder_mapping.get(folder, folder) for folder in folder_list]
-
-# 创建一个下拉框选择文件夹
-selected_folder_index = st.selectbox("Select a province/选择省份", range(len(folder_list_replaced)), format_func=lambda i: folder_list_replaced[i])
+    st.write(f"Failed to retrieve data from GitHub API. Status code: {response.status_code}")
 
 # 获取原始文件夹名称（没有进行替换）
 original_selected_folder = folder_list[selected_folder_index]
