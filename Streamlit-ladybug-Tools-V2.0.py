@@ -12,7 +12,6 @@ import requests
 import io
 import tempfile
 import httpx
-from ratelimit import limits, sleep_and_retry
 
 # Function to map a value between two ranges to a new range
 def map_value(value, old_min, old_max, new_min, new_max):
