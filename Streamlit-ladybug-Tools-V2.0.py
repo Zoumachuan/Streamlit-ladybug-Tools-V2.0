@@ -103,22 +103,20 @@ folder_mapping = {
     "CHN_ZJ": "浙江省"
 }
 
-# 创建一个具有TTL（生存时间）的缓存，例如设置缓存时间为3600秒（1小时）
-cache = TTLCache(maxsize=100, ttl=3600)
+cache = TTLCache(maxsize=5, ttl=3600)
 
-def get_github_contents(repo_url, headers):
+def get_github_contents(repo_url, token):
     if repo_url in cache:
         return cache.get(repo_url)
     else:
+        headers = {"Authorization": f"token {token}"}  # 添加 token 到请求头
         response = requests.get(repo_url, headers=headers, verify=False)
         cache[repo_url] = response
         return response
 
 repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
-headers = {
-    'Authorization': 'token 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'
-}
-response = get_github_contents(repo_url, headers)
+github_token = "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"  # 替换为您的 GitHub Token
+response = get_github_contents(repo_url, github_token)
 
 # 添加调试输出以检查response内容
 print("Response status code:", response.status_code)
