@@ -12,6 +12,7 @@ import requests
 import io
 import tempfile
 import httpx
+from functools import lru_cache
 
 # Function to map a value between two ranges to a new range
 def map_value(value, old_min, old_max, new_min, new_max):
@@ -102,8 +103,13 @@ folder_mapping = {
     "CHN_ZJ": "浙江省"
 }
 
+@lru_cache(maxsize=None)
+def get_github_contents(repo_url):
+    response = requests.get(repo_url, verify=False)
+    return response
+
 repo_url = "https://api.github.com/repos/Zoumachuan/CHN_EPW/contents/CHN_EPW"
-response = requests.get(repo_url, verify=False)
+response = get_github_contents(repo_url)
 
 # 添加调试输出以检查response内容
 print("Response status code:", response.status_code)
